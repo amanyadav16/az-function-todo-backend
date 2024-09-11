@@ -5,7 +5,7 @@ export async function getTodos(request: HttpRequest, context: InvocationContext)
 
     const name = request.query.get('name') || await request.text() || 'world';
 
-    return { body: `Hello, ${name}!` };
+    return { body: `Hello, ${name}! ${process.env['testValue']}` };
 };
 
 app.http('getTodos', {
