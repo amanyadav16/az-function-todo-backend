@@ -1,20 +1,15 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { getCosmosClient } from "../services/cosmos-connection.service";
+import { getContainer} from "../services/cosmos-connection.service";
 
 export async function deleteTodo(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    // Extract the necessary fields from the request
-    const id = request.query.get('id') || '';
-    const todoId = request.query.get('todoId') || '';
+    const id = request.query.get('id');
 
-    console.log(`id: ${id}, todoId: ${todoId}`);
+    console.log(`id: ${id}`);
 
     try {
-        const cosmosClient = getCosmosClient();
-        const database = cosmosClient.database('todoDatabase');
-        const container = database.container('todoContainer');
+        const container = getContainer('demoDB', 'todoContainer');
 
-        // Delete the todo item
-        await container.item(id, todoId).delete();
+        await container.item(id,id).delete();
 
         return { jsonBody: { message: 'Todo deleted successfully!' }, status: 200 };
     } catch (error) {

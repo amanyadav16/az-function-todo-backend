@@ -1,6 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { v4 as uuidv4 } from 'uuid';
-import { getCosmosClient } from "../services/cosmos-connection.service";
+import { getContainer} from "../services/cosmos-connection.service";
 
 export async function addTodo(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     const body = JSON.parse(await request.text());
@@ -10,14 +9,10 @@ export async function addTodo(request: HttpRequest, context: InvocationContext):
         isCompleted: false,
         createdTime: currentTime,
         updatedTime: currentTime,
-        todoId: uuidv4()
     };
     try {
-        const cosmosClient = getCosmosClient();
-        const database = cosmosClient.database('todoDatabase');
-        const container = database.container('todoContainer');
+        const container = getContainer('demoDB', 'todoContainer');
 
-        // Insert the new todo item
         const { resource: createdTodo } = await container.items.create(newTodo);
 
         return { jsonBody: { message: 'Todo created successfully!', data: createdTodo }, status: 201 };
